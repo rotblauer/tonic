@@ -1,5 +1,9 @@
 {{ define "posts/index.tmpl" }}
-<html><h1>
+<html>
+
+{{ template "shared/navbar.tmpl" }}
+
+<h1>
     {{ .title }}
 </h1>
 <p>Using posts/index.tmpl</p>
