@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Massad/gin-boilerplate/controllers"
 	"github.com/Massad/gin-boilerplate/db"
@@ -37,6 +38,8 @@ func main() {
 
 	r.Use(CORSMiddleware())
 
+	r.LoadHTMLGlob("templates/**/*")
+
 	db.Init()
 
 	v1 := r.Group("/v1")
@@ -57,8 +60,21 @@ func main() {
 		v1.PUT("/article/:id", article.Update)
 		v1.DELETE("/article/:id", article.Delete)
 	}
+	app := r.Group("/app")
+	{
+		app.GET("/posts/index", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{
+				"title": "Posts",
+			})
+		})
+		app.GET("/users/index", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "users/index.tmpl", gin.H{
+				"title": "Users",
+			})
+		})
+	}
 
-	r.Static("/public", "./public")
+	// r.Static("/public", "./public")
 
 	r.Run(":9000")
 }
