@@ -1,7 +1,20 @@
 {{ define "posts/index.tmpl" }}
 <html>
 
-{{ template "shared/navbar.tmpl" }}
+<!-- the trailing dot passes the template data from its parent -->
+{{ template "shared/navbar.tmpl" . }}
+
+<p>
+Button go here?!:  {{ template "shared/buttons.tmpl" . }}
+</p>
+
+<p>
+	Lonesomely.tmpl: {{ template "lonesomely.tmpl" }}
+</p>
+
+<p>
+	reallyalone: {{ template "reallyalone" }}
+</p>
 
 <h1>
     {{ .title }}

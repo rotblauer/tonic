@@ -1,10 +1,29 @@
 {{ define "shared/navbar.tmpl" }}
 <html>
 	<h1>
-		I'm the navbar!
+		<!-- abc data is made available through by the parent -->
+		I'm the navbar! Params?: {{ .abc }}
 	</h1>
 	<p>
 		Using shared/navbar.tmpl
 	</p>
 </html>
+{{ end }}
+
+<!-- i could even define another template in here if i wanted to -->
+{{ define "shared/buttons.tmpl" }}
+	<!-- let's reference this back in the index.tmpl -->
+	<button>I'm a button, {{ .etc }}</button>
+{{ end }}
+
+<!-- let's define a template with a different name -->
+{{ define "lonesomely.tmpl" }}
+	<span style="color: green;">
+		like a cowbody
+	</span>
+{{ end }}
+
+<!-- do you even need the .tmpl? -->
+{{ define "reallyalone" }}
+	<small>reallyalone</small>
 {{ end }}

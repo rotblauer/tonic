@@ -38,6 +38,7 @@ func main() {
 
 	r.Use(CORSMiddleware())
 
+	// Thanks to this glob, we can grab and grok all the templatez.
 	r.LoadHTMLGlob("templates/**/*")
 
 	db.Init()
@@ -63,8 +64,10 @@ func main() {
 	app := r.Group("/app")
 	{
 		app.GET("/posts/index", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{
+			c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{ // Notice that we're calling .tmpl, _not_ .html
 				"title": "Posts",
+				"abc":   "123", // we'll pass this to a template nested inside posts/index
+				"etc":   "etcetc",
 			})
 		})
 		app.GET("/users/index", func(c *gin.Context) {
