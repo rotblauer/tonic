@@ -19,6 +19,13 @@ Button go here?!:  {{ template "shared/buttons.tmpl" . }}
 <h1>
     {{ .title }}
 </h1>
+
+<h4>
+	HasHoles? -- {{ .user.HasHoles }}
+	<br>
+	HashOles? -- {{ .user.HashOles }} 
+</h4>
+
 <p>Using posts/index.tmpl</p>
 </html>
 {{ end }}

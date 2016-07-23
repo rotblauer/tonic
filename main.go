@@ -30,6 +30,11 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
+type Thingey struct {
+	HasHoles bool
+	HashOles string
+}
+
 func main() {
 	r := gin.Default()
 
@@ -68,6 +73,7 @@ func main() {
 				"title": "Posts",
 				"abc":   "123", // we'll pass this to a template nested inside posts/index
 				"etc":   "etcetc",
+				"user":  Thingey{HasHoles: true, HashOles: "yes please"},
 			})
 		})
 		app.GET("/users/index", func(c *gin.Context) {
