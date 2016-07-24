@@ -1,0 +1,27 @@
+{
+  "name": "openbound",
+  "version": "1.0.0",
+  "description": "![alt tag](https://upload.wikimedia.org/wikipedia/commons/2/23/Golang.png)",
+  "main": "",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irstacks/gin-boilerplate.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/irstacks/gin-boilerplate/issues"
+  },
+  "homepage": "https://github.com/irstacks/gin-boilerplate#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^2.3.2"
+  }
+}

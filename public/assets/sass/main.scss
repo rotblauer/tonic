@@ -1,0 +1,15 @@
+.testes {
+    border: 3x dashed pink;
+    .key {
+        font-weight: bolder;
+	}
+    .val {
+        font-style: italic;
+	}
+    &.testes-hidden {
+        display: none;
+	}
+    &.testes-fury {
+        background-color: red; 
+    }
+}
