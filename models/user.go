@@ -2,10 +2,13 @@ package models
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
-	"github.com/Massad/gin-boilerplate/db"
-	"github.com/Massad/gin-boilerplate/forms"
+	"github.com/gin-gonic/gin"
+
+	"../db"
+	"../forms"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,24 +27,27 @@ type User struct {
 type UserModel struct{}
 
 //Signin ...
-func (m UserModel) Signin(form forms.SigninForm) (user User, err error) {
+func AuthenticateUser(email string, password string, c *gin.Context) (userId string, isAuthenticated bool, err error) {
 
-	err = db.GetDB().SelectOne(&user, "SELECT id, email, password, name, updated_at, created_at FROM public.user WHERE email=LOWER($1) LIMIT 1", form.Email)
+	var user User
+	isAuthenticated = false
 
+	err = db.GetDB().SelectOne(&user, "SELECT id, email, password, name, updated_at, created_at FROM public.user WHERE email=LOWER($1) LIMIT 1", email)
 	if err != nil {
-		return user, err
+		return userId, isAuthenticated, err
 	}
 
-	bytePassword := []byte(form.Password)
+	bytePassword := []byte(password)
 	byteHashedPassword := []byte(user.Password)
 
 	err = bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
-
 	if err != nil {
-		return user, errors.New("Invalid password")
+		return userId, isAuthenticated, errors.New("Invalid password")
 	}
 
-	return user, nil
+	isAuthenticated = true
+
+	return strconv.Itoa(user.ID), isAuthenticated, err
 }
 
 //Signup ...
@@ -73,7 +79,7 @@ func (m UserModel) Signup(form forms.SignupForm) (user User, err error) {
 		}
 	}
 
-	return user, errors.New("Not registered")
+	return user, errors.New("Signed up.") // "Not registered." ? what is this nonsense
 }
 
 //One ...

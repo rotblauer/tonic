@@ -3,8 +3,9 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/Massad/gin-boilerplate/forms"
-	"github.com/Massad/gin-boilerplate/models"
+	"../forms"
+	"../jwt"
+	"../models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,9 +17,10 @@ var articleModel = new(models.ArticleModel)
 
 //Create ...
 func (ctrl ArticleController) Create(c *gin.Context) {
-	userID := getUserID(c)
 
-	if userID == 0 {
+	claims := jwt.ExtractClaims(c)
+	userID, err := strconv.ParseInt(claims["id"].(string), 10, 64)
+	if userID == 0 || err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
 		return
@@ -45,9 +47,10 @@ func (ctrl ArticleController) Create(c *gin.Context) {
 
 //All ...
 func (ctrl ArticleController) All(c *gin.Context) {
-	userID := getUserID(c)
 
-	if userID == 0 {
+	claims := jwt.ExtractClaims(c)
+	userID, err := strconv.ParseInt(claims["id"].(string), 10, 64)
+	if userID == 0 || err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
 		return
@@ -66,9 +69,10 @@ func (ctrl ArticleController) All(c *gin.Context) {
 
 //One ...
 func (ctrl ArticleController) One(c *gin.Context) {
-	userID := getUserID(c)
 
-	if userID == 0 {
+	claims := jwt.ExtractClaims(c)
+	userID, err := strconv.ParseInt(claims["id"].(string), 10, 64)
+	if userID == 0 || err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
 		return
@@ -92,9 +96,10 @@ func (ctrl ArticleController) One(c *gin.Context) {
 
 //Update ...
 func (ctrl ArticleController) Update(c *gin.Context) {
-	userID := getUserID(c)
 
-	if userID == 0 {
+	claims := jwt.ExtractClaims(c)
+	userID, err := strconv.ParseInt(claims["id"].(string), 10, 64)
+	if userID == 0 || err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
 		return
@@ -125,9 +130,10 @@ func (ctrl ArticleController) Update(c *gin.Context) {
 
 //Delete ...
 func (ctrl ArticleController) Delete(c *gin.Context) {
-	userID := getUserID(c)
 
-	if userID == 0 {
+	claims := jwt.ExtractClaims(c)
+	userID, err := strconv.ParseInt(claims["id"].(string), 10, 64)
+	if userID == 0 || err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
 		return

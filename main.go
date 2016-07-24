@@ -3,11 +3,14 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/Massad/gin-boilerplate/controllers"
-	"github.com/Massad/gin-boilerplate/db"
+	"./jwt"
 
-	"github.com/gin-gonic/contrib/sessions"
+	"./controllers"
+	"./db"
+	"./models"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,9 +42,6 @@ type Thingey struct {
 func main() {
 	r := gin.Default()
 
-	store, _ := sessions.NewRedisStore(10, "tcp", "localhost:6379", "", []byte("secret"))
-	r.Use(sessions.Sessions("gin-boilerplate-session", store))
-
 	r.Use(CORSMiddleware())
 
 	// Thanks to this glob, we can grab and grok all the templatez.
@@ -51,12 +51,34 @@ func main() {
 
 	db.Init()
 
+	// the jwt middleware
+	authMiddleware := &jwt.GinJWTMiddleware{
+		Realm:         "test zone",
+		Key:           []byte("secret key"),
+		Timeout:       time.Hour,
+		MaxRefresh:    time.Hour,
+		Authenticator: models.AuthenticateUser,
+		Authorizator: func(email string, c *gin.Context) bool {
+			if email == "rotblauer@gmail.com" {
+				return true
+			}
+
+			return false
+		},
+		Unauthorized: func(c *gin.Context, code int, message string) {
+			c.JSON(code, gin.H{
+				"code":    code,
+				"message": message,
+			})
+		},
+	}
+
 	v1 := r.Group("/v1")
 	{
 		/*** START USER ***/
 		user := new(controllers.UserController)
 
-		v1.POST("/u/signin", user.Signin)
+		v1.POST("/u/signin", authMiddleware.LoginHandler)
 		v1.POST("/u/signup", user.Signup)
 		v1.GET("/u/signout", user.Signout)
 
