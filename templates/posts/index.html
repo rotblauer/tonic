@@ -1,6 +1,11 @@
 {{ define "posts/index.tmpl" }}
 <html>
 
+
+<!-- import styles -->
+{{ template "vendorStyles.tmpl" }}
+
+
 <!-- the trailing dot passes the template data from its parent -->
 {{ template "shared/navbar.tmpl" . }}
 
@@ -27,5 +32,10 @@ Button go here?!:  {{ template "shared/buttons.tmpl" . }}
 </h4>
 
 <p>Using posts/index.tmpl</p>
+
+
+<!-- import js -->
+{{ template "vendorJS.tmpl" }}
+
 </html>
 {{ end }}
