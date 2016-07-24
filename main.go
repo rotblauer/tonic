@@ -30,6 +30,7 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
+// Lame comment.
 type Thingey struct {
 	HasHoles bool
 	HashOles string
