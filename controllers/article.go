@@ -59,19 +59,7 @@ func (ctrl ArticleController) Create(c *gin.Context) {
 //All ...
 func (ctrl ArticleController) All(c *gin.Context) {
 
-	claimUserId := auth.ExtractClaims(c)["id"].(string)
-	if claimUserId == "" {
-		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
-	}
-
-	userID, err := strconv.ParseInt(claimUserId, 10, 64)
-	if err != nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
-		c.Abort()
-		return
-	}
-
-	data, err := articleModel.All(userID)
+	data, err := articleModel.All()
 
 	if err != nil {
 		c.JSON(406, gin.H{"Message": "Could not get the articles", "error": err.Error()})
@@ -85,23 +73,11 @@ func (ctrl ArticleController) All(c *gin.Context) {
 //One ...
 func (ctrl ArticleController) One(c *gin.Context) {
 
-	claimUserId := auth.ExtractClaims(c)["id"].(string)
-	if claimUserId == "" {
-		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
-	}
-
-	userID, err := strconv.ParseInt(claimUserId, 10, 64)
-	if err != nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
-		c.Abort()
-		return
-	}
-
 	id := c.Param("id")
 
 	if id, err := strconv.ParseInt(id, 10, 64); err == nil {
 
-		data, err := articleModel.One(userID, id)
+		data, err := articleModel.One(id)
 		if err != nil {
 			c.JSON(404, gin.H{"Message": "Article not found", "error": err.Error()})
 			c.Abort()

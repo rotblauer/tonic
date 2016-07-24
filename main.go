@@ -92,12 +92,14 @@ func main() {
 
 		v1.GET("/a", article.All)
 		v1.GET("/a/:id", article.One)
-		v1.PUT("/a/:id", article.Update)
+
 		v1.DELETE("/a/:id", article.Delete)
 
 		auth := v1.Group("/auth")
 		auth.Use(authMiddleware.MiddlewareFunc())
 		auth.POST("/a", article.Create)
+		auth.PUT("/a/:id", article.Update)
+		auth.DELETE("/a/:id", article.Delete)
 		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	}
 

@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"../db"
@@ -11,7 +12,7 @@ import (
 //Article ...
 type Article struct {
 	ID        int64    `db:"id, primarykey, autoincrement" json:"id"`
-	UserID    int64    `db:"user_id" json:"-"`
+	UserID    int64    `db:"user_id" json:"userId"`
 	Title     string   `db:"title" json:"title"`
 	Content   string   `db:"content" json:"content"`
 	UpdatedAt int64    `db:"updated_at" json:"updated_at"`
@@ -46,20 +47,24 @@ func (m ArticleModel) Create(userID int64, form forms.ArticleForm) (articleID in
 }
 
 //One ...
-func (m ArticleModel) One(userID, id int64) (article Article, err error) {
-	err = db.GetDB().SelectOne(&article, "SELECT a.id, a.title, a.content, a.updated_at, a.created_at, json_build_object('id', u.id, 'name', u.name, 'email', u.email) AS user FROM article a LEFT JOIN public.user u ON a.user_id = u.id WHERE a.user_id=$1 AND a.id=$2 GROUP BY a.id, a.title, a.content, a.updated_at, a.created_at, u.id, u.name, u.email LIMIT 1", userID, id)
+func (m ArticleModel) One(id int64) (article Article, err error) {
+	err = db.GetDB().SelectOne(&article, "SELECT a.id, a.user_id, a.title, a.content, a.updated_at, a.created_at, json_build_object('id', u.id, 'name', u.name, 'email', u.email) AS user FROM article a LEFT JOIN public.user u ON a.user_id = u.id WHERE a.id=$1 GROUP BY a.id, a.title, a.content, a.updated_at, a.created_at, u.id, u.name, u.email LIMIT 1", id)
 	return article, err
 }
 
 //All ...
-func (m ArticleModel) All(userID int64) (articles []Article, err error) {
-	_, err = db.GetDB().Select(&articles, "SELECT a.id, a.title, a.content, a.updated_at, a.created_at, json_build_object('id', u.id, 'name', u.name, 'email', u.email) AS user FROM article a LEFT JOIN public.user u ON a.user_id = u.id WHERE a.user_id=$1 GROUP BY a.id, a.title, a.content, a.updated_at, a.created_at, u.id, u.name, u.email ORDER BY a.id DESC", userID)
+func (m ArticleModel) All() (articles []Article, err error) {
+	_, err = db.GetDB().Select(&articles, "SELECT a.id, a.user_id, a.title, a.content, a.updated_at, a.created_at, json_build_object('id', u.id, 'name', u.name, 'email', u.email) AS user FROM article a LEFT JOIN public.user u ON a.user_id = u.id GROUP BY a.id, a.title, a.content, a.updated_at, a.created_at, u.id, u.name, u.email ORDER BY a.id DESC")
 	return articles, err
 }
 
 //Update ...
 func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (err error) {
-	_, err = m.One(userID, id)
+	a, err := m.One(id)
+	fmt.Println("Comparing USERIDS: ", a.UserID, userID)
+	if a.UserID != userID {
+		return errors.New("Not authenticated to update this article.")
+	}
 
 	if err != nil {
 		return errors.New("Article not found")
@@ -72,7 +77,10 @@ func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (er
 
 //Delete ...
 func (m ArticleModel) Delete(userID, id int64) (err error) {
-	_, err = m.One(userID, id)
+	a, err := m.One(id)
+	if a.UserID != userID {
+		return errors.New("Not authenticated to delete this article.")
+	}
 
 	if err != nil {
 		return errors.New("Article not found")
