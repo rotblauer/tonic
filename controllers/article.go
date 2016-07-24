@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 
 	"../forms"
@@ -15,53 +16,26 @@ type ArticleController struct{}
 
 var articleModel = new(models.ArticleModel)
 
-//Create ...
-func (ctrl ArticleController) Create(c *gin.Context) {
-
+func getUserIDFromJWTClaim(c *gin.Context) (int64, error) {
 	claimUserId := auth.ExtractClaims(c)["id"].(string)
-
-	// extraPayload, exists := c.Get("JWT_PAYLOAD")
-	// if !exists {
-	// 	fmt.Println("error getting claim user id from payload...")
-	// }
-
-	// fmt.Println("article model extraPayload:", extraPayload)
-
-	// castedClaims := extraPayload.(map[string]string)
-
-	// claimUserId := castedClaims["id"]
-
-	// // claims := auth.ExtractClaims(c)
-	// if _, exists := c.Get("JWT_PAYLOAD"); !exists {
-	// 	emptyClaims := make(jwt.MapClaims)
-
-	// 	fmt.Println("There were no claims in the JWT_PAYLOAD", emptyClaims)
-	// }
-
-	// jwtClaims, _ := c.Get("JWT_PAYLOAD")
-
-	// jc := jwtClaims.(jwt.MapClaims)
-
-	// fmt.Println("Extreacted claims in model like in jwt: ", jc)
-
-	// claims := jc
-
-	// fmt.Println("extracted claims: ", claims)
-
-	// claimUserId := claims["id"]
-
-	// fmt.Println("creating article for userId:", claimUserId)
-
-	// if claimUserId == nil {
-	// 	c.JSON(403, gin.H{"message": "There is no userId"})
-	// }
+	if claimUserId == "" {
+		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
+		return 0, errors.New("Dang it!")
+	}
 
 	userID, err := strconv.ParseInt(claimUserId, 10, 64)
 	if err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
-		return
 	}
+
+	return userID, err
+}
+
+//Create ...
+func (ctrl ArticleController) Create(c *gin.Context) {
+
+	userID, _ := getUserIDFromJWTClaim(c)
 
 	var articleForm forms.ArticleForm
 
@@ -85,13 +59,12 @@ func (ctrl ArticleController) Create(c *gin.Context) {
 //All ...
 func (ctrl ArticleController) All(c *gin.Context) {
 
-	claims := auth.ExtractClaims(c)
-	claimUserId := claims["id"]
-	if claimUserId == nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+	claimUserId := auth.ExtractClaims(c)["id"].(string)
+	if claimUserId == "" {
+		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
 	}
 
-	userID, err := strconv.ParseInt(claimUserId.(string), 10, 64)
+	userID, err := strconv.ParseInt(claimUserId, 10, 64)
 	if err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
@@ -112,13 +85,12 @@ func (ctrl ArticleController) All(c *gin.Context) {
 //One ...
 func (ctrl ArticleController) One(c *gin.Context) {
 
-	claims := auth.ExtractClaims(c)
-	claimUserId := claims["id"]
-	if claimUserId == nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+	claimUserId := auth.ExtractClaims(c)["id"].(string)
+	if claimUserId == "" {
+		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
 	}
 
-	userID, err := strconv.ParseInt(claimUserId.(string), 10, 64)
+	userID, err := strconv.ParseInt(claimUserId, 10, 64)
 	if err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
@@ -144,13 +116,12 @@ func (ctrl ArticleController) One(c *gin.Context) {
 //Update ...
 func (ctrl ArticleController) Update(c *gin.Context) {
 
-	claims := auth.ExtractClaims(c)
-	claimUserId := claims["id"]
-	if claimUserId == nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+	claimUserId := auth.ExtractClaims(c)["id"].(string)
+	if claimUserId == "" {
+		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
 	}
 
-	userID, err := strconv.ParseInt(claimUserId.(string), 10, 64)
+	userID, err := strconv.ParseInt(claimUserId, 10, 64)
 	if err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()
@@ -183,13 +154,12 @@ func (ctrl ArticleController) Update(c *gin.Context) {
 //Delete ...
 func (ctrl ArticleController) Delete(c *gin.Context) {
 
-	claims := auth.ExtractClaims(c)
-	claimUserId := claims["id"]
-	if claimUserId == nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+	claimUserId := auth.ExtractClaims(c)["id"].(string)
+	if claimUserId == "" {
+		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
 	}
 
-	userID, err := strconv.ParseInt(claimUserId.(string), 10, 64)
+	userID, err := strconv.ParseInt(claimUserId, 10, 64)
 	if err != nil {
 		c.JSON(403, gin.H{"message": "Please login first"})
 		c.Abort()

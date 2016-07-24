@@ -1,3 +1,16 @@
+
+
+----
+http -v --json POST localhost:9000/v1/me/a "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODYzNzcsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5MzgyNzc3LCJ1c2VyX2lkIjoicm90YmxhdWVyQGdtYWlsLmNvbSJ9.qEBqr-XtIsplGnQTa8j_gEGKLrjrwdBG-dJ1FqVHOzg" title=hello content=world
+
+http -v --json POST localhost:9000/v1/u/signin email=rotblauer@gmail.com password=testes
+
+{
+    "expire": "2016-07-24T13:33:12-04:00",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODE1OTIsImlkIjoiMiIsIm9yaWdfaWF0IjoxNDY5Mzc3OTkyfQ.A_qboyShXutO5BUiS_sru8bgryvYkYm3sQE1-vfgm6E"
+}
+----
+
 ![alt tag](https://upload.wikimedia.org/wikipedia/commons/2/23/Golang.png)
 
 [![Build Status](https://travis-ci.org/Massad/gin-boilerplate.svg?branch=master)](https://travis-ci.org/Massad/gin-boilerplate)
@@ -10,7 +23,8 @@ The fastest way to deploy a restful api's with [Gin Framework](https://gin-gonic
 ## Configured with
 
 * [go-gorp](github.com/go-gorp/gorp): Go Relational Persistence
-* [RedisStore](https://github.com/gin-gonic/contrib/tree/master/sessions): Gin middleware for session management with multi-backend support (currently cookie, Redis).
+* ~~[RedisStore](https://github.com/gin-gonic/contrib/tree/master/sessions): Gin middleware for session management with multi-backend support (currently cookie, Redis).~~
+* JWT authentication
 * Built-in **CORS Middleware**
 * Feature **PostgreSQL 9.4** JSON queries
 * Unit test

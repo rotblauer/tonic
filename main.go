@@ -94,13 +94,9 @@ func main() {
 		v1.GET("/a/:id", article.One)
 		v1.PUT("/a/:id", article.Update)
 		v1.DELETE("/a/:id", article.Delete)
-	}
 
-	auth := r.Group("/v1/me")
-	auth.Use(authMiddleware.MiddlewareFunc())
-	{
-		article := new(controllers.ArticleController)
-
+		auth := v1.Group("/auth")
+		auth.Use(authMiddleware.MiddlewareFunc())
 		auth.POST("/a", article.Create)
 		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 	}
