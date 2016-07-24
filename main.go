@@ -1,37 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"time"
 
-	"./jwt"
+	// "gopkg.in/appleboy/gin-jwt.v2"
 
+	// "./conf"
+	"./conf"
 	"./controllers"
 	"./db"
-	"./models"
+	// "./models"
 
 	"github.com/gin-gonic/gin"
 )
-
-//CORSMiddleware ...
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost")
-		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Origin, Authorization, Accept, Client-Security-Token, Accept-Encoding, x-access-token")
-		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		if c.Request.Method == "OPTIONS" {
-			fmt.Println("OPTIONS")
-			c.AbortWithStatus(200)
-		} else {
-			c.Next()
-		}
-	}
-}
 
 // Lame comment.
 type Thingey struct {
@@ -42,50 +23,24 @@ type Thingey struct {
 func main() {
 	r := gin.Default()
 
-	r.Use(CORSMiddleware())
-
-	// Thanks to this glob, we can grab and grok all the templatez.
-	r.LoadHTMLGlob("templates/**/*")
-
-	r.Static("/public", "./public")
+	r.Use(conf.CORSMiddleware())
 
 	db.Init()
 
+	// Thanks to this glob, we can grab and grok all the templatez.
+	r.LoadHTMLGlob("templates/**/*")
+	r.Static("/public", "./public")
+
 	// the jwt middleware
-	authMiddleware := &jwt.GinJWTMiddleware{
-		Realm:         "test zone",
-		Key:           []byte("secret key"),
-		Timeout:       time.Hour,
-		MaxRefresh:    time.Hour,
-		Authenticator: models.AuthenticateUser,
-		Authorizator: func(email string, c *gin.Context) bool {
-			// if email == "rotblauer@gmail.com" {
-			// 	return true
-			// }
-			// return false
-			return true
-		},
-		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.JSON(code, gin.H{
-				"code":    code,
-				"message": message,
-			})
-		},
-		PayloadFunc: func(userId string) map[string]interface{} {
-			m := make(map[string]interface{})
-			m["email"] = userId
-			return m
-		},
-	}
+	authMiddleware := conf.InitJWTMiddlewareConf()
 
 	v1 := r.Group("/v1")
 	{
 		/*** START USER ***/
 		user := new(controllers.UserController)
 
-		v1.POST("/u/signin", authMiddleware.LoginHandler)
 		v1.POST("/u/signup", user.Signup)
-		v1.GET("/u/signout", user.Signout)
+		v1.POST("/signin", authMiddleware.LoginHandler)
 
 		/*** START Article ***/
 		article := new(controllers.ArticleController)
@@ -97,10 +52,13 @@ func main() {
 
 		auth := v1.Group("/auth")
 		auth.Use(authMiddleware.MiddlewareFunc())
+		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
+
+		// AUTHY Article
 		auth.POST("/a", article.Create)
 		auth.PUT("/a/:id", article.Update)
 		auth.DELETE("/a/:id", article.Delete)
-		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
+
 	}
 
 	app := r.Group("/app")

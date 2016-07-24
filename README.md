@@ -1,14 +1,37 @@
 
 
 ----
-http -v --json POST localhost:9000/v1/me/a "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODYzNzcsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5MzgyNzc3LCJ1c2VyX2lkIjoicm90YmxhdWVyQGdtYWlsLmNvbSJ9.qEBqr-XtIsplGnQTa8j_gEGKLrjrwdBG-dJ1FqVHOzg" title=hello content=world
+### Public
+Get all articles
+`http -v --json GET localhost:9000/v1/a`
 
-http -v --json POST localhost:9000/v1/u/signin email=rotblauer@gmail.com password=testes
+Get one article
+`http -v --json GET localhost:9000/v1/a/1`
+
+### Authy
+Signin
+`http -v POST localhost:9000/v1/signin email=rotblauer@gmail.com password=testes`
+
+Refresh token
+`http -v --json GET localhost:9000/v1/auth/refresh_token "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODYzNzcsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5MzgyNzc3LCJ1c2VyX2lkIjoicm90YmxhdWVyQGdtYWlsLmNvbSJ9.qEBqr-XtIsplGnQTa8j_gEGKLrjrwdBG-dJ1FqVHOzg"`
+
+> There is no signout. Why not? Tokens are self-contained bad-ass mutha-fuckas. For one, they have (adjustable) expiration dates. When a token expires you'll be defacto signed out. The other way to manually signout is to just remove the token from the client's memory store (local storage of any variety, or client-handled cookies). Much sexy. Oh and payloads are cool. 
 
 {
     "expire": "2016-07-24T13:33:12-04:00",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODE1OTIsImlkIjoiMiIsIm9yaWdfaWF0IjoxNDY5Mzc3OTkyfQ.A_qboyShXutO5BUiS_sru8bgryvYkYm3sQE1-vfgm6E"
 }
+
+
+Create article
+`http -v --json POST localhost:9000/v1/auth/a "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0NjkzOTk4MzUsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5Mzk2MjM1fQ.X8z-c0z6A_dn1hJnHnYo4CgLF--8wBIp4DoZq40Ubo8" title=hello content=world`
+
+Update article
+`http -v --json PUT localhost:9000/v1/auth/a/5 "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0NjkzOTMyMTAsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5Mzg5NjEwfQ.4F65k-x8Zlwfs9Rj9agiupshd2Xz_P1ZW-Mwi0-ykY0" title=hello content=wordies`
+
+Delete article
+`http -v --json DELETE localhost:9000/v1/auth/a/1 "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0NjkzOTMyMTAsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5Mzg5NjEwfQ.4F65k-x8Zlwfs9Rj9agiupshd2Xz_P1ZW-Mwi0-ykY0"`
+
 ----
 
 ![alt tag](https://upload.wikimedia.org/wikipedia/commons/2/23/Golang.png)
