@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -46,6 +47,9 @@ func AuthenticateUser(email string, password string, c *gin.Context) (userId str
 	}
 
 	isAuthenticated = true
+
+	userIdAsString := strconv.Itoa(user.ID)
+	fmt.Println("AuthenticateUser userIdAsString:", userIdAsString)
 
 	return strconv.Itoa(user.ID), isAuthenticated, err
 }

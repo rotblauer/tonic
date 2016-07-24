@@ -59,17 +59,22 @@ func main() {
 		MaxRefresh:    time.Hour,
 		Authenticator: models.AuthenticateUser,
 		Authorizator: func(email string, c *gin.Context) bool {
-			if email == "rotblauer@gmail.com" {
-				return true
-			}
-
-			return false
+			// if email == "rotblauer@gmail.com" {
+			// 	return true
+			// }
+			// return false
+			return true
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
 				"code":    code,
 				"message": message,
 			})
+		},
+		PayloadFunc: func(userId string) map[string]interface{} {
+			m := make(map[string]interface{})
+			m["email"] = userId
+			return m
 		},
 	}
 
@@ -85,12 +90,21 @@ func main() {
 		/*** START Article ***/
 		article := new(controllers.ArticleController)
 
-		v1.POST("/a", article.Create)
 		v1.GET("/a", article.All)
 		v1.GET("/a/:id", article.One)
 		v1.PUT("/a/:id", article.Update)
 		v1.DELETE("/a/:id", article.Delete)
 	}
+
+	auth := r.Group("/v1/me")
+	auth.Use(authMiddleware.MiddlewareFunc())
+	{
+		article := new(controllers.ArticleController)
+
+		auth.POST("/a", article.Create)
+		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
+	}
+
 	app := r.Group("/app")
 	{
 		app.GET("/posts/index", func(c *gin.Context) {

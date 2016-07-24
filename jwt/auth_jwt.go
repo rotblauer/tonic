@@ -5,6 +5,7 @@ package jwt
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -170,6 +171,10 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
+	//////
+	fmt.Println("jwt storing claim userId as: ", userId)
+	///////
+
 	// Create the token
 	token := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
 	claims := token.Claims.(jwt.MapClaims)
@@ -252,7 +257,11 @@ func ExtractClaims(c *gin.Context) jwt.MapClaims {
 
 	jwtClaims, _ := c.Get("JWT_PAYLOAD")
 
-	return jwtClaims.(jwt.MapClaims)
+	jc := jwtClaims.(jwt.MapClaims)
+
+	fmt.Println("Extreacted claims in jwt: ", jc)
+
+	return jc
 }
 
 // TokenGenerator handler that clients can use to get a jwt token.
