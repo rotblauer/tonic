@@ -146,6 +146,15 @@ func (mw *GinJWTMiddleware) middlewareImpl(c *gin.Context) {
 	c.Next()
 }
 
+func setAuthenticatedHeader(c *gin.Context, token string, t time.Time) {
+
+	expiry := t.Format(time.RFC3339) // "2006-01-02T15:04:05Z07:00"
+
+	authHeaderString := "token=" + token + " expiry=" + expiry
+
+	c.Header("Authorization", authHeaderString)
+}
+
 // LoginHandler can be used by clients to get a jwt token.
 // Payload needs to be json in the form of {"email": "EMAIL", "password": "PASSWORD"}.
 // Reply will be of the form {"token": "TOKEN"}.
@@ -198,10 +207,14 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
+	setAuthenticatedHeader(c, tokenString, expire)
 	c.JSON(http.StatusOK, gin.H{
-		"token":  tokenString,
-		"expiry": expire.Format(time.RFC3339),
+		"data": userId,
 	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"token":  tokenString,
+	// 	"expiry": expire.Format(time.RFC3339),
+	// })
 }
 
 // RefreshHandler can be used to refresh a token. The token still needs to be valid on refresh.
@@ -238,10 +251,14 @@ func (mw *GinJWTMiddleware) RefreshHandler(c *gin.Context) {
 		return
 	}
 
+	setAuthenticatedHeader(c, tokenString, expire)
 	c.JSON(http.StatusOK, gin.H{
-		"token":  tokenString,
-		"expiry": expire.Format(time.RFC3339),
+		"data": nil,
 	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"token":  tokenString,
+	// 	"expiry": expire.Format(time.RFC3339),
+	// })
 }
 
 // ExtractClaims help to extract the JWT claims
