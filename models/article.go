@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"../db"
@@ -27,10 +26,9 @@ type ArticleModel struct{}
 func (m ArticleModel) Create(userID int64, form forms.ArticleForm) (articleID int64, err error) {
 	getDb := db.GetDB()
 
+	// Ensure user exists.
 	userModel := new(UserModel)
-
 	checkUser, err := userModel.One(userID)
-
 	if err != nil && checkUser.ID > 0 {
 		return 0, errors.New("User doesn't exist")
 	}
@@ -61,7 +59,8 @@ func (m ArticleModel) All() (articles []Article, err error) {
 //Update ...
 func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (err error) {
 	a, err := m.One(id)
-	fmt.Println("Comparing USERIDS: ", a.UserID, userID)
+
+	// Ensure owner of the article is the one updating it.
 	if a.UserID != userID {
 		return errors.New("Not authenticated to update this article.")
 	}
@@ -78,6 +77,8 @@ func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (er
 //Delete ...
 func (m ArticleModel) Delete(userID, id int64) (err error) {
 	a, err := m.One(id)
+
+	// Ensure owner of the article is the one updating it.
 	if a.UserID != userID {
 		return errors.New("Not authenticated to delete this article.")
 	}

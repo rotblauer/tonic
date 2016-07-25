@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"../forms"
-	auth "../jwt"
 	"../models"
 
 	"github.com/gin-gonic/gin"
@@ -16,26 +15,27 @@ type ArticleController struct{}
 
 var articleModel = new(models.ArticleModel)
 
-func getUserIDFromJWTClaim(c *gin.Context) (int64, error) {
-	claimUserId := auth.ExtractClaims(c)["id"].(string)
-	if claimUserId == "" {
-		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
-		return 0, errors.New("Dang it!")
+// Key "userID" is made available from the JWT middleware
+// which extracts it from the claims payload 'uid'.
+func getUserIdFromContext(c *gin.Context) (uid int64, err error) {
+	// userID, _ := getUserIDFromJWTClaim(c)
+	userid, exists := c.Get("userID")
+	if !exists {
+		return uid, errors.New("Unauthorized")
 	}
 
-	userID, err := strconv.ParseInt(claimUserId, 10, 64)
-	if err != nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
-		c.Abort()
-	}
-
-	return userID, err
+	uid, err = strconv.ParseInt(userid.(string), 10, 64)
+	return uid, err
 }
 
 //Create ...
 func (ctrl ArticleController) Create(c *gin.Context) {
 
-	userID, _ := getUserIDFromJWTClaim(c)
+	userID, err := getUserIdFromContext(c)
+	if err != nil {
+		c.JSON(403, gin.H{"message": err.Error()})
+		c.Abort()
+	}
 
 	var articleForm forms.ArticleForm
 
@@ -92,16 +92,10 @@ func (ctrl ArticleController) One(c *gin.Context) {
 //Update ...
 func (ctrl ArticleController) Update(c *gin.Context) {
 
-	claimUserId := auth.ExtractClaims(c)["id"].(string)
-	if claimUserId == "" {
-		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
-	}
-
-	userID, err := strconv.ParseInt(claimUserId, 10, 64)
+	userID, err := getUserIdFromContext(c)
 	if err != nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+		c.JSON(403, gin.H{"message": err.Error()})
 		c.Abort()
-		return
 	}
 
 	id := c.Param("id")
@@ -130,16 +124,10 @@ func (ctrl ArticleController) Update(c *gin.Context) {
 //Delete ...
 func (ctrl ArticleController) Delete(c *gin.Context) {
 
-	claimUserId := auth.ExtractClaims(c)["id"].(string)
-	if claimUserId == "" {
-		c.JSON(500, gin.H{"message": "Shoot, we messed up."})
-	}
-
-	userID, err := strconv.ParseInt(claimUserId, 10, 64)
+	userID, err := getUserIdFromContext(c)
 	if err != nil {
-		c.JSON(403, gin.H{"message": "Please login first"})
+		c.JSON(403, gin.H{"message": err.Error()})
 		c.Abort()
-		return
 	}
 
 	id := c.Param("id")

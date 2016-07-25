@@ -82,7 +82,7 @@ You'll get a response like this when you signin.
 ```
 
 Create article
-`http -v --json POST localhost:9000/v1/auth/a "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0NjkzOTk4MzUsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5Mzk2MjM1fQ.X8z-c0z6A_dn1hJnHnYo4CgLF--8wBIp4DoZq40Ubo8" title=hello content=world`
+`http -v --json POST localhost:9000/v1/auth/a "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0Njk0NzQzNzYsIm9yaWdfaWF0IjoxNDY5NDcwNzc2LCJ1aWQiOiIxIn0.bgB_V-TuY27-qxcujkUdgySLcWkseFK24eTiglfcd74" title=hello content=world`
 
 Update article
 `http -v --json PUT localhost:9000/v1/auth/a/5 "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvdGJsYXVlckBnbWFpbC5jb20iLCJleHAiOjE0NjkzOTMyMTAsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5Mzg5NjEwfQ.4F65k-x8Zlwfs9Rj9agiupshd2Xz_P1ZW-Mwi0-ykY0" title=hello content=wordies`

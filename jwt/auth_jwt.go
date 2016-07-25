@@ -5,7 +5,6 @@ package jwt
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -133,7 +132,9 @@ func (mw *GinJWTMiddleware) middlewareImpl(c *gin.Context) {
 
 	claims := token.Claims.(jwt.MapClaims)
 
-	id := claims["id"].(string)
+	// Note that we're making userID available exclusively for this gin context; ie you don't have
+	// to parse the claims yourself (again) if you just want the userID.
+	id := claims["uid"].(string)
 	c.Set("JWT_PAYLOAD", claims)
 	c.Set("userID", id)
 
@@ -171,10 +172,6 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	//////
-	fmt.Println("jwt storing claim userId as: ", userId)
-	///////
-
 	// Create the token
 	token := jwt.New(jwt.GetSigningMethod(mw.SigningAlgorithm))
 	claims := token.Claims.(jwt.MapClaims)
@@ -190,7 +187,7 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 	}
 
 	expire := time.Now().Add(mw.Timeout)
-	claims["id"] = userId
+	claims["uid"] = userId
 	claims["exp"] = expire.Unix()
 	claims["orig_iat"] = time.Now().Unix()
 
@@ -203,7 +200,7 @@ func (mw *GinJWTMiddleware) LoginHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":  tokenString,
-		"expire": expire.Format(time.RFC3339),
+		"expiry": expire.Format(time.RFC3339),
 	})
 }
 
@@ -230,7 +227,7 @@ func (mw *GinJWTMiddleware) RefreshHandler(c *gin.Context) {
 	}
 
 	expire := time.Now().Add(mw.Timeout)
-	newClaims["id"] = claims["id"]
+	newClaims["uid"] = claims["uid"]
 	newClaims["exp"] = expire.Unix()
 	newClaims["orig_iat"] = origIat
 
@@ -243,7 +240,7 @@ func (mw *GinJWTMiddleware) RefreshHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":  tokenString,
-		"expire": expire.Format(time.RFC3339),
+		"expiry": expire.Format(time.RFC3339),
 	})
 }
 
@@ -259,8 +256,6 @@ func ExtractClaims(c *gin.Context) jwt.MapClaims {
 
 	jc := jwtClaims.(jwt.MapClaims)
 
-	fmt.Println("Extreacted claims in jwt: ", jc)
-
 	return jc
 }
 
@@ -275,7 +270,7 @@ func (mw *GinJWTMiddleware) TokenGenerator(userID string) string {
 		}
 	}
 
-	claims["id"] = userID
+	claims["uid"] = userID
 	claims["exp"] = time.Now().Add(mw.Timeout).Unix()
 	claims["orig_iat"] = time.Now().Unix()
 
