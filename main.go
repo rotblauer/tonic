@@ -61,9 +61,9 @@ func main() {
 
 	}
 
-	app := r.Group("/app")
+	app := r.Group("/")
 	{
-		app.GET("/posts/index", func(c *gin.Context) {
+		app.GET("posts/index", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{ // Notice that we're calling .tmpl, _not_ .html
 				"title": "Posts",
 				"abc":   "123", // we'll pass this to a template nested inside posts/index
@@ -71,7 +71,7 @@ func main() {
 				"user":  Thingey{HasHoles: true, HashOles: "yes please"},
 			})
 		})
-		app.GET("/users/index", func(c *gin.Context) {
+		app.GET("users/index", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "users/index.tmpl", gin.H{
 				"title": "Users",
 			})
