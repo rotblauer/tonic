@@ -1,24 +1,12 @@
 package main
 
 import (
-	"net/http"
-
-	// "gopkg.in/appleboy/gin-jwt.v2"
-
-	// "./conf"
 	"./conf"
 	"./controllers"
 	"./db"
-	// "./models"
 
 	"github.com/gin-gonic/gin"
 )
-
-// Lame comment.
-type Thingey struct {
-	HasHoles bool
-	HashOles string
-}
 
 func main() {
 	r := gin.Default()
@@ -27,9 +15,9 @@ func main() {
 
 	db.Init()
 
-	// Thanks to this glob, we can grab and grok all the templatez.
-	r.LoadHTMLGlob("templates/**/*")
-	r.Static("/public", "./public")
+	r.StaticFile("/", "./public/index.html") // Root page. All template rendering happens client side.
+	r.Static("/vendor", "./public/vendor")
+	r.Static("/assets", "./public/assets")
 
 	// the jwt middleware
 	authMiddleware := conf.InitJWTMiddlewareConf()
@@ -59,23 +47,6 @@ func main() {
 		auth.PUT("/a/:id", article.Update)
 		auth.DELETE("/a/:id", article.Delete)
 
-	}
-
-	app := r.Group("/")
-	{
-		app.GET("posts/index", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{ // Notice that we're calling .tmpl, _not_ .html
-				"title": "Posts",
-				"abc":   "123", // we'll pass this to a template nested inside posts/index
-				"etc":   "etcetc",
-				"user":  Thingey{HasHoles: true, HashOles: "yes please"},
-			})
-		})
-		app.GET("users/index", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "users/index.tmpl", gin.H{
-				"title": "Users",
-			})
-		})
 	}
 
 	r.Run(":9000")
