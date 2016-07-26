@@ -9,7 +9,7 @@ var app = angular.module('main', [
 
 app.config(function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $resourceProvider) {
 
-  $resourceProvider.defaults.stripTrailingSlashes = false;
+  // $resourceProvider.defaults.stripTrailingSlashes = false;
   
   jwtInterceptorProvider.tokenGetter = [function() {
       return localStorage.getItem('token');

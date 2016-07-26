@@ -67,7 +67,7 @@ func (ctrl ArticleController) All(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"data": data})
+	c.JSON(200, data)
 }
 
 //One ...

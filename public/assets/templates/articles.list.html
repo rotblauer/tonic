@@ -4,5 +4,6 @@
 	<li ng-repeat="article in articles">
 		{{ article | json }}
 		<span class="octicon octicon-x text-danger" ng-click="deleteArticle(article)"></span>
+		<span class="octicon octicon-repo-push text-primary" ng-click="editArticle(article)"></span>
 	</li>
 </ul>

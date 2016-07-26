@@ -10,11 +10,19 @@ app.controller('articleCtrl', ['$scope', '$log', 'Article', function ($scope, $l
     });
   };
 
+  $scope.editArticle = function (article) {
+    article.title = "I'm different now.";
+    article.$update({id: article.id}, function (data) {
+      $log.log('udpated', data);
+    });
+  };
+
   $scope.deleteArticle = function (article) {
-  	$log.log(article);
-  	article.$delete(function () {
-  		$log.log('deleted');
-  	});
+  	article.$remove(function (data) {
+      $log.log('deleted article', data);
+    }, function (err) {
+      $log.log(err);
+    });
   };
 
 }]);

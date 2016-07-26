@@ -10,7 +10,7 @@ app.controller('registrationCtrl', ['$scope', '$log', '$http', 'jwtHelper', func
     return {
       payload: jwtHelper.decodeToken(token) || null, 
       expiry: jwtHelper.getTokenExpirationDate(token) || null,
-      expired: (Date.parse(jwtHelper.getTokenExpirationDate(token)) >= Date.now() ? false : true) || null
+      expired: Date.parse(jwtHelper.getTokenExpirationDate(token)) >= Date.now() ? false : true
     };
   };
 
