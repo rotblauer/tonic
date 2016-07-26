@@ -27,7 +27,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterc
       url: "/articles",
       views: {
         'articles': {
-          templateUrl: "/public/assets/templates/articles.html",
+          templateUrl: "/public/assets/templates/article/articles.html",
           controller: 'articleCtrl'
         },
         'registration': {

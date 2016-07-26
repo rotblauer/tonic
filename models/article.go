@@ -23,25 +23,26 @@ type Article struct {
 type ArticleModel struct{}
 
 //Create ...
-func (m ArticleModel) Create(userID int64, form forms.ArticleForm) (articleID int64, err error) {
+func (m ArticleModel) Create(userID int64, form forms.ArticleForm) (article Article, err error) {
 	getDb := db.GetDB()
 
 	// Ensure user exists.
 	userModel := new(UserModel)
 	checkUser, err := userModel.One(userID)
 	if err != nil && checkUser.ID > 0 {
-		return 0, errors.New("User doesn't exist")
+		return article, errors.New("User doesn't exist")
 	}
 
+	// Insert the article.
 	_, err = getDb.Exec("INSERT INTO article(user_id, title, content, updated_at, created_at) VALUES($1, $2, $3, $4, $5) RETURNING id", userID, form.Title, form.Content, time.Now().Unix(), time.Now().Unix())
-
 	if err != nil {
-		return 0, err
+		return article, err
 	}
 
-	articleID, err = getDb.SelectInt("SELECT id FROM article WHERE user_id=$1 ORDER BY id DESC LIMIT 1", userID)
-
-	return articleID, err
+	articleID, err := getDb.SelectInt("SELECT id FROM article WHERE user_id=$1 ORDER BY id DESC LIMIT 1", userID)
+	// err = getDb.SelectOne(&article, "SELECT * FROM article WHERE user_id=$1 ORDER BY id DESC LIMIT 1", userID)
+	article, err = m.One(articleID)
+	return article, err
 }
 
 //One ...
@@ -57,21 +58,25 @@ func (m ArticleModel) All() (articles []Article, err error) {
 }
 
 //Update ...
-func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (err error) {
+func (m ArticleModel) Update(userID int64, id int64, form forms.ArticleForm) (article Article, err error) {
 	a, err := m.One(id)
 
 	// Ensure owner of the article is the one updating it.
 	if a.UserID != userID {
-		return errors.New("Not authenticated to update this article.")
+		return article, errors.New("Not authenticated to update this article.")
 	}
 
 	if err != nil {
-		return errors.New("Article not found")
+		return article, errors.New("Article not found")
 	}
 
 	_, err = db.GetDB().Exec("UPDATE article SET title=$1, content=$2, updated_at=$3 WHERE id=$4", form.Title, form.Content, time.Now().Unix(), id)
+	if err != nil {
+		return article, err
+	}
 
-	return err
+	article, err = m.One(id)
+	return article, err
 }
 
 //Delete ...

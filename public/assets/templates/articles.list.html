@@ -1,9 +1,9 @@
 <h3>List of articles</h3>
 
 <ul>
-	<li ng-repeat="article in articles">
+	<li ng-repeat="article in data.articles track by $index">
 		{{ article | json }}
-		<span class="octicon octicon-x text-danger" ng-click="deleteArticle(article)"></span>
+		<span class="octicon octicon-x text-danger" ng-click="deleteArticle(article, $index)"></span>
 		<span class="octicon octicon-repo-push text-primary" ng-click="editArticle(article)"></span>
 	</li>
 </ul>

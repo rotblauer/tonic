@@ -45,15 +45,15 @@ func (ctrl ArticleController) Create(c *gin.Context) {
 		return
 	}
 
-	articleID, err := articleModel.Create(userID, articleForm)
+	article, err := articleModel.Create(userID, articleForm)
 
-	if articleID > 0 && err != nil {
+	if article.ID > 0 && err != nil {
 		c.JSON(406, gin.H{"message": "Article could not be created", "error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "Article created", "id": articleID})
+	c.JSON(200, article)
 }
 
 //All ...
@@ -109,13 +109,13 @@ func (ctrl ArticleController) Update(c *gin.Context) {
 			return
 		}
 
-		err := articleModel.Update(userID, id, articleForm)
+		article, err := articleModel.Update(userID, id, articleForm)
 		if err != nil {
 			c.JSON(406, gin.H{"Message": "Article could not be updated", "error": err.Error()})
 			c.Abort()
 			return
 		}
-		c.JSON(200, gin.H{"message": "Article updated"})
+		c.JSON(200, article)
 	} else {
 		c.JSON(404, gin.H{"Message": "Invalid parameter", "error": err.Error()})
 	}
