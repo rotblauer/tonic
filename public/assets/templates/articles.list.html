@@ -1,0 +1,8 @@
+<h3>List of articles</h3>
+
+<ul>
+	<li ng-repeat="article in articles">
+		{{ article | json }}
+		<span class="octicon octicon-x text-danger" ng-click="deleteArticle(article)"></span>
+	</li>
+</ul>

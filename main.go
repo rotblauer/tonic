@@ -40,9 +40,9 @@ func main() {
 		v1.GET("/a/:id", article.One)
 
 		// Authy.
-		auth.POST("/a", article.Create)
-		auth.PUT("/a/:id", article.Update)
-		auth.DELETE("/a/:id", article.Delete)
+		v1.Use(authMiddleware.MiddlewareFunc()).POST("/a", article.Create)
+		v1.Use(authMiddleware.MiddlewareFunc()).PUT("/a/:id", article.Update)
+		v1.Use(authMiddleware.MiddlewareFunc()).DELETE("/a/:id", article.Delete)
 
 	}
 

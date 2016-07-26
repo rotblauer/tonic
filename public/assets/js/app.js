@@ -1,106 +1,59 @@
 'use strict';
 
 var app = angular.module('main', [
-  'ui.router', 
-  'ng-token-auth',
-  'angular-jwt'
+  'ui.router',
+  // 'ng-token-auth',
+  'angular-jwt',
+  'ngResource'
   ]);
 
-app.config(function($authProvider) {
+app.config(function($stateProvider, $urlRouterProvider, $httpProvider, jwtInterceptorProvider, $resourceProvider) {
 
-    // the following shows the default values. values passed to this method
-    // will extend the defaults using angular.extend
+  $resourceProvider.defaults.stripTrailingSlashes = false;
+  
+  jwtInterceptorProvider.tokenGetter = [function() {
+      return localStorage.getItem('token');
+    }];
 
-    $authProvider.configure({
-      apiUrl:                  '/v1',
-      // tokenValidationPath:     '/auth/validate_token',
-      // signOutUrl:              '/auth/sign_out',
-      emailRegistrationPath:   '/auth/signup',
-      // accountUpdatePath:       '/auth',
-      // accountDeletePath:       '/auth',
-      confirmationSuccessUrl:  window.location.href,
-      // passwordResetPath:       '/auth/password',
-      // passwordUpdatePath:      '/auth/password',
-      // passwordResetSuccessUrl: window.location.href,
-      emailSignInPath:         '/auth/signin',
-      storage:                 'localStorage', // 'cookies'
-      // forceValidateToken:      false,
-      validateOnPageLoad:      false, //true, // FIXME
-      proxyIf:                 function() { return false; },
-      proxyUrl:                '/proxy',
-      // omniauthWindowType:      'sameWindow',
-      // authProviderPaths: {
-      //   github:   '/auth/github',
-      //   facebook: '/auth/facebook',
-      //   google:   '/auth/google'
-      // },
-      tokenFormat: {
-        // "access-token": "{{ token }}",
-        // "token-type":   "Bearer",
-        // "client":       "{{ clientId }}",
-        // "expiry":       "{{ expiry }}",
-        // "uid":          "{{ uid }}"
-        "Authorization": "Bearer {{ token }}"
-      },
-      cookieOps: {
-        path: "/",
-        expires: 9999,
-        expirationUnit: 'days',
-        secure: false,
-        domain: 'domain.com'
-      },
-      createPopup: function(url) {
-        return window.open(url, '_blank', 'closebuttoncaption=Cancel');
-      },
-      parseExpiry: function(headers) {
-        // convert from UTC ruby (seconds) to UTC js (milliseconds)
-        // return (parseInt(headers['expiry']) * 1000) || null;
-        return (Date.parse(headers['Authorization'].match(/expiry=([^ ]+) /)[1])) || null;
-      },
-      handleLoginResponse: function(response) {
-        return response.data;
-      },
-      handleAccountUpdateResponse: function(response) {
-        return response.data;
-      },
-      handleTokenValidationResponse: function(response) {
-        return response.data;
+  $httpProvider.interceptors.push('jwtInterceptor');
+
+  // Routing.
+  // 
+  $urlRouterProvider.otherwise("/articles");
+  //
+  // Now set up the states
+  $stateProvider
+    .state('articles', {
+      url: "/articles",
+      views: {
+        'articles': {
+          templateUrl: "/public/assets/templates/articles.html",
+          controller: 'articleCtrl'
+        },
+        'registration': {
+          templateUrl: "/public/assets/templates/registration.html",
+          controller: 'registrationCtrl'
+        },
+        'createArticle': {
+          templateUrl: "/public/assets/templates/article/create.html",
+          controller: 'articleCtrl'
+        }
       }
+    })
+    .state('articles.list', {
+      url: "/list",
+      templateUrl: "/public/assets/templates/articles.list.html",
+      controller: "articleCtrl"
     });
   });
 
 
-app.config(function($stateProvider, $urlRouterProvider) {
-  //
-  // For any unmatched url, redirect to /state1
-  $urlRouterProvider.otherwise("/state1");
-  //
-  // Now set up the states
-  $stateProvider
-    .state('state1', {
-      url: "/state1",
-      templateUrl: "/public/assets/templates/state1.html"
-    })
-    .state('state1.list', {
-      url: "/list",
-      templateUrl: "/public/assets/templates/state1.list.html",
-      controller: "testCtrl"
-    });
-    // .state('state2', {
-    //   url: "/state2",
-    //   templateUrl: "partials/state2.html"
-    // })
-    // .state('state2.list', {
-    //   url: "/list",
-    //   templateUrl: "partials/state2.list.html",
-    //   controller: function($scope) {
-    //     $scope.things = ["A", "Set", "Of", "Things"];
-    //   }
-    // });
-});
 
 
-app.controller('testCtrl', ['$scope', function ($scope) {
-	$scope.testes = 'check check';
-  $scope.items = ['why', 'hello', 'there'];
-}]);
+
+
+
+
+
+
+

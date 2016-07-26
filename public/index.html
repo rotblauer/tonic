@@ -39,10 +39,19 @@
 				</div>		
 			</div>
 			<div class="col-sm-6">
-				<div ui-view></div>		
+				<div ui-view='registration'></div>
+			</div>
+			
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div ui-view="articles"></div>		
+			</div>
+			<div class="col-sm-6">
+				<div class="" ui-view="createArticle"></div>
 			</div>
 		</div>
-		</div>
+		</div> <!-- end .container-fluid -->
 		
 
 		
@@ -62,12 +71,19 @@
 			<script src="/public/vendor/ng-token-auth/dist/ng-token-auth.min.js"></script>
 			<!-- angular jwt -->
 			<script src="/public/vendor/angular-jwt/dist/angular-jwt.min.js"></script>
+			<!-- angular resource -->
+			<script src="/public/vendor/angular/angular-resource.js"></script>
+
 			<!-- pace -->
 			<script src="/public/vendor/pace/pace.js"></script>
 
 		<!-- APP JS -->
 			<!-- inject:js -->
 			<script src="/public/assets/js/app.js"></script>
+			<script src="/public/assets/js/angular-app/article.ctrl.js"></script>
+			<script src="/public/assets/js/angular-app/article.factory.js"></script>
+			<script src="/public/assets/js/angular-app/registration.ctrl.js"></script>
+			<script src="/public/assets/js/angular-app/test.ctrl.js"></script>
 			<!-- endinject -->
 
 	</body>

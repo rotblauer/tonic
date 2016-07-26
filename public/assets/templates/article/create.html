@@ -1,0 +1,11 @@
+<p class="text-success">
+	{{ newArticle | json }}
+</p>
+
+<input type="text" ng-model="newArticle.title">
+
+<textarea name="" id="" cols="30" rows="10" ng-model="newArticle.content"></textarea>
+
+<button class="btn btn-success" ng-click="createArticle()">
+	create article
+</button>
