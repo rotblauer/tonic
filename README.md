@@ -1,6 +1,6 @@
 ## Building blocks
 - A fork of https://github.com/Massad/gin-boilerplate
-- Using https://github.com/appleboy/gin-jwt instead of Redis-based session storage. 
+- Using https://github.com/appleboy/gin-jwt instead of Redis-based session storage.
 
 ## Configured with
 
@@ -48,12 +48,12 @@ $ go test -v ./tests/*
 ## Routing
 API routes are nested under `/v1` and the web app under `/`.
 
-Authentication uses JSON Web Tokens (JWTs), which are stateless server-side, meaning you don't have to use Redis or any other session store to keep track of logins. Authenticated routes live under `/v1/auth`. 
+Authentication uses JSON Web Tokens (JWTs), which are stateless server-side, meaning you don't have to use Redis or any other session store to keep track of logins. Authenticated routes live under `/v1/auth`.
 
 
-## Call and response. 
+## Call and response.
 
-> Install httpie. 
+> Install httpie.
 > - `$ brew install httpie`
 
 ### Public
@@ -67,13 +67,13 @@ Get one article
 Signin
 `http -v POST localhost:9000/v1/signin email=rotblauer@gmail.com password=testes`
 
-Refresh token 
-> While you're still logged in, ie. you can't refresh with/an expired token. 
+Refresh token
+> While you're still logged in, ie. you can't refresh with/an expired token.
 `http -v --json GET localhost:9000/v1/auth/refresh_token "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0NjkzODYzNzcsImlkIjoiMSIsIm9yaWdfaWF0IjoxNDY5MzgyNzc3LCJ1c2VyX2lkIjoicm90YmxhdWVyQGdtYWlsLmNvbSJ9.qEBqr-XtIsplGnQTa8j_gEGKLrjrwdBG-dJ1FqVHOzg"`
 
-> __There is no signout__. Why not? Tokens are cryptic self-contained bad-ass mutha-fuckas. For one, they have (adjustable) expiration dates. When a token expires you'll be defacto signed out. The other way to manually signout is to just remove the token from the client's memory store (local storage of any variety, or client-handled cookies). Much sexy. Oh and payloads are cool. 
+> __There is no signout__. Why not? Tokens are cryptic self-contained bad-ass mutha-fuckas. For one, they have (adjustable) expiration dates. When a token expires you'll be defacto signed out. The other way to manually signout is to just remove the token from the client's memory store (local storage of any variety, or client-handled cookies). Much sexy. Oh and payloads are cool.
 
-You'll get a response like this when you signin. 
+You'll get a response like this when you signin.
 ```json
 {
     "expire": "2016-07-24T13:33:12-04:00",
